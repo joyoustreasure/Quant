@@ -159,6 +159,54 @@ kor_ticker = kor_ticker.replace({np.nan:None})
 
 
 
+# mysql에 저장
+
+import pymysql
+
+# 데이터베이스 연결 설정
+conn = pymysql.connect(host='127.0.0.1', 
+                       user='root', 
+                       password='a1536613',
+                       db='stock_db',
+                       charset='utf8')
+
+mycursor = conn.cursor()
+# primary key 빼고 다 넣어주기
+query = """
+    INSERT INTO kor_ticker (종목코드, 종목명, 시장구분, 종가, 시가총액, 기준일, EPS, BPS, 주당배당금, 종목구분)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+    종목명=VALUES(종목명), 시장구분=VALUES(시장구분), 종가=VALUES(종가), 시가총액=VALUES(시가총액), EPS=VALUES(EPS), BPS=VALUES(BPS), 주당배당금=VALUES(주당배당금), 종목구분=VALUES(종목구분);
+"""
+
+    
+args = kor_ticker.values.tolist()
+mycursor.executemany(query,args)
+
+conn.commit()
+conn.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
